@@ -40,11 +40,9 @@ odoo.define('payment_rave.rave', function(require) {
                     ajax.jsonRpc("/payment/rave/verify_charge", 'call', {
                         data : response.tx,
                         tx_ref:response.tx.txRef
-                    }).done(function(data){
-                        //console.log(data);
+                    }).then(function(data){
                         window.location.href = data;
-                    }).fail(function(data){
-                        console.log("Failed to redirect!");
+                    }).catch(function(data){
                         var msg = data && data.data && data.data.message;
                         var wizard = $(qweb.render('rave.error', {'msg': msg || _t('Payment error')}));
                         wizard.appendTo($('body')).modal({'keyboard': true});
@@ -89,9 +87,9 @@ odoo.define('payment_rave.rave', function(require) {
                 phone : get_input_value("phone"),
                 return_url :   get_input_value("return_url"),
                 merchant :  get_input_value("merchant")
-            }).done(function(data){
+            }).then(function(data){
                 payWithRave(data.publicKey,data.email,data.amount,data.phone,data.currency,data.invoice_num);
-            }).fail(function(data){
+            }).catch(function(data){
                 console.log("Failed!");
                 var msg = data && data.data && data.data.message;
                 var wizard = $(qweb.render('rave.error', {'msg': msg || _t('Payment error')}));
@@ -104,7 +102,7 @@ odoo.define('payment_rave.rave', function(require) {
         if(environment === "prod"){
             var url =  "https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-inline.js";
         }else{
-            var url =  "https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/flwpbf-inline.js";
+            var url =  "https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-inline.js";
         }
 
         $.getScript(url, function(data, textStatus, jqxhr) {
